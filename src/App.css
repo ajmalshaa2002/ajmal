@@ -18,10 +18,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -30,6 +33,8 @@ body {
   font-family: var(--font-body);
   overflow-x: hidden;
   cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scroll Progress Indicator */
@@ -312,11 +317,15 @@ body {
 .canvas-container {
   width: 100%;
   height: 100vh;
+  touch-action: none;
+  user-select: none;
 }
 
 .content-wrapper {
   position: relative;
   z-index: 1;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* ============================================
@@ -1011,6 +1020,15 @@ body {
   .projects-3d,
   .contact-content {
     grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .hero-3d {
+    height: 400px;
+  }
+  
+  .projects-canvas {
+    height: 400px;
   }
   
   .nav-menu {
@@ -1045,19 +1063,311 @@ body {
   .hero-section {
     padding: 2rem;
   }
+  
+  .section-grid {
+    gap: 4rem;
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  /* Typography adjustments */
   .hero-text h1 {
     font-size: 2.5rem;
   }
   
+  .section-title {
+    font-size: 2rem;
+    gap: 1rem;
+  }
+  
+  .title-number {
+    font-size: 1rem;
+  }
+  
+  /* Layout adjustments */
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .hero-3d {
+    height: 300px;
+    order: -1;
+  }
+  
+  .cta-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+  }
+  
+  /* Projects section */
+  .projects-3d {
+    grid-template-columns: 1fr;
+  }
+  
+  .projects-canvas {
+    height: 350px;
+    order: -1;
+  }
+  
+  .projects-info {
+    gap: 1.5rem;
+  }
+  
+  /* Skills grid */
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  /* Contact section */
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 2rem;
+  }
+  
+  /* Scroll to top button */
+  .scroll-to-top {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Further typography reduction */
+  .hero-text h1 {
+    font-size: 2rem;
+    letter-spacing: -1px;
+  }
+  
+  .code-line {
+    font-size: 1rem;
+  }
+  
+  .hero-description {
+    font-size: 0.938rem;
+  }
+  
+  /* Tighter spacing */
+  .section {
+    padding: 3rem 1.5rem;
+    min-height: auto;
+  }
+  
+  .hero-section {
+    padding: 1.5rem;
+    min-height: 100vh;
+  }
+  
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+  
+  .navbar.scrolled {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  /* Make buttons stack on very small screens */
   .cta-buttons {
     flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+  
+  /* Smaller 3D canvas on mobile */
+  .hero-3d {
+    height: 250px;
+  }
+  
+  .projects-canvas {
+    height: 300px;
+  }
+  
+  /* Project cards */
+  .project-card {
+    padding: 1.5rem;
+  }
+  
+  .project-number {
+    font-size: 2rem;
+  }
+  
+  .project-title {
+    font-size: 1.25rem;
+  }
+  
+  /* Terminal window */
+  .terminal-window {
+    transform: translateX(0) rotateY(0deg);
+  }
+  
+  .terminal-body {
+    font-size: 0.75rem;
+    padding: 1rem;
+  }
+  
+  /* Contact form */
+  .form-input {
+    font-size: 0.875rem;
+  }
+  
+  /* Scroll to top */
+  .scroll-to-top {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  /* Binary stream - reduce on mobile */
+  .binary-stream {
+    opacity: 0.02;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small devices */
+  .nav-menu {
+    width: 100%;
+    right: -100%;
+  }
+  
+  .hero-text h1 {
+    font-size: 1.75rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .hero-3d,
+  .projects-canvas {
+    height: 200px;
+  }
+  
+  .section {
+    padding: 2rem 1rem;
+  }
+  
+  .project-card {
+    padding: 1rem;
   }
   
   .skills-grid {
-    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .skill-item {
+    padding: 1rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Hide custom cursor on touch devices */
+  .custom-cursor {
+    display: none;
+  }
+  
+  body {
+    cursor: auto;
+  }
+  
+  .interactive {
+    cursor: auto !important;
+  }
+  
+  /* Make interactive elements more touch-friendly */
+  .btn-primary,
+  .btn-secondary,
+  .project-link,
+  .nav-link,
+  .contact-link {
+    min-height: 44px;
+    cursor: pointer;
+  }
+  
+  .scroll-to-top {
+    cursor: pointer;
+  }
+  
+  /* Increase tap target sizes */
+  .menu-toggle {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0;
+  }
+  
+  /* Better hover states for touch */
+  .skill-item:active,
+  .project-card:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: translateY(-2px);
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 896px) and (orientation: landscape) {
+  .hero-section {
+    min-height: auto;
+    padding: 2rem;
+  }
+  
+  .hero-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .hero-3d {
+    height: 300px;
+  }
+  
+  .section {
+    min-height: auto;
+    padding: 3rem 2rem;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .custom-cursor {
+    will-change: transform;
+  }
+  
+  .loader-box,
+  .hero-3d canvas,
+  .projects-canvas canvas {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

@@ -6,7 +6,9 @@ import * as THREE from 'three';
 // Floating code particles with matrix effect
 function CodeParticles({ mouse }) {
   const ref = useRef();
-  const count = 3000;
+  // Reduce particles on mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const count = isMobile ? 1500 : 3000;
 
   const [positions, velocities] = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -158,9 +160,19 @@ export default function Scene() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Reduce quality on mobile for better performance
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="canvas-container">
-      <Canvas camera={{ position: [0, 0, 20], fov: 75 }}>
+      <Canvas 
+        camera={{ position: [0, 0, 20], fov: 75 }}
+        gl={{ 
+          antialias: !isMobile,
+          powerPreference: isMobile ? "low-power" : "high-performance"
+        }}
+        dpr={isMobile ? 1 : window.devicePixelRatio}
+      >
         <ambientLight intensity={0.5} />
         <CameraController mouse={mouse} />
         <CodeParticles mouse={mouse} />
