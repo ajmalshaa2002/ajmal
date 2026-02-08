@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0b0b15;
+  font-family: sans-serif;
+  overflow-x: hidden;
+}
+
+a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+}
