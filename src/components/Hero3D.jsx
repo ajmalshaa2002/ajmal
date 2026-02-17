@@ -1,27 +1,35 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { isMobile, isTouchEnabled } from '../utils/responsive';
 
-function AnimatedCodeSphere({ mouse }) {
+function AnimatedCodeSphere({ mouse, isReduced }) {
   const sphereRef = useRef();
   const particlesRef = useRef();
+
+  // Reduce particle count on mobile
+  const particleCount = isReduced ? 500 : 1000;
 
   useFrame((state) => {
     if (sphereRef.current) {
       // Follow mouse with smooth interpolation
-      sphereRef.current.rotation.y += 0.003 + mouse.current.x * 0.01;
-      sphereRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.1 + mouse.current.y * 0.3;
+      const rotationSpeed = isReduced ? 0.0015 : 0.003;
+      sphereRef.current.rotation.y += rotationSpeed + mouse.current.x * (isReduced ? 0.005 : 0.01);
+      sphereRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.1 + mouse.current.y * (isReduced ? 0.15 : 0.3);
       
       // Scale slightly based on mouse distance from center
       const mouseDistance = Math.sqrt(mouse.current.x ** 2 + mouse.current.y ** 2);
-      const targetScale = 1 + mouseDistance * 0.1;
+      const targetScale = 1 + mouseDistance * 0.05;
       sphereRef.current.scale.lerp(
         new THREE.Vector3(targetScale, targetScale, targetScale),
-        0.1
+        isReduced ? 0.05 : 0.1
       );
     }
     
-    if (particlesRef.current) {
+    if (particlesRef.current?.geometry.attributes.position) {
+      // Skip particle updates on reduced performance devices
+      if (isReduced && state.clock.elapsedTime % 2 > 0.016) return;
+      
       const positions = particlesRef.current.geometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         positions[i + 1] += Math.sin(state.clock.elapsedTime + i) * 0.002;
@@ -35,7 +43,6 @@ function AnimatedCodeSphere({ mouse }) {
   });
 
   // Create particles around sphere
-  const particleCount = 1000;
   const particles = React.useMemo(() => {
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
@@ -48,12 +55,12 @@ function AnimatedCodeSphere({ mouse }) {
       positions[i * 3 + 2] = radius * Math.cos(phi);
     }
     return positions;
-  }, []);
+  }, [particleCount]);
 
   return (
     <group>
       <mesh ref={sphereRef}>
-        <sphereGeometry args={[2.5, 32, 32]} />
+        <sphereGeometry args={[2.5, isReduced ? 16 : 32, isReduced ? 16 : 32]} />
         <meshBasicMaterial color="#ffffff" wireframe />
       </mesh>
       
@@ -73,12 +80,13 @@ function AnimatedCodeSphere({ mouse }) {
 }
 
 // Camera controller for parallax effect
-function CameraRig({ mouse }) {
+function CameraRig({ mouse, isReduced }) {
   const { camera } = useThree();
   
   useFrame(() => {
-    camera.position.x += (mouse.current.x * 1.5 - camera.position.x) * 0.05;
-    camera.position.y += (-mouse.current.y * 1.5 - camera.position.y) * 0.05;
+    const smoothing = isReduced ? 0.03 : 0.05;
+    camera.position.x += (mouse.current.x * 1.5 - camera.position.x) * smoothing;
+    camera.position.y += (-mouse.current.y * 1.5 - camera.position.y) * smoothing;
     camera.lookAt(0, 0, 0);
   });
   
@@ -87,18 +95,42 @@ function CameraRig({ mouse }) {
 
 export default function Hero3D() {
   const mouse = useRef({ x: 0, y: 0 });
+  const [isReduced, setIsReduced] = useState(false);
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    // Determine if we should reduce animations based on device
+    const shouldReduce = isMobile() || isTouchEnabled();
+    setIsReduced(shouldReduce);
+  }, []);
 
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
     mouse.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   };
 
+  const deviceIsMobile = isMobile();
+
   return (
-    <div className="hero-canvas" onMouseMove={handleMouseMove}>
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
-        <CameraRig mouse={mouse} />
-        <AnimatedCodeSphere mouse={mouse} />
+    <div 
+      className="hero-canvas" 
+      ref={canvasRef}
+      onMouseMove={handleMouseMove}
+      style={{ userSelect: 'none', touchAction: 'none' }}
+    >
+      <Canvas 
+        camera={{ position: [0, 0, 10], fov: 50 }}
+        gl={{ 
+          antialias: !deviceIsMobile,
+          powerPreference: deviceIsMobile ? "low-power" : "high-performance",
+        }}
+        dpr={deviceIsMobile ? 1 : Math.min(2, window.devicePixelRatio)}
+        performance={{ min: 0.5, max: 1 }}
+      >
+        <CameraRig mouse={mouse} isReduced={isReduced} />
+        <AnimatedCodeSphere mouse={mouse} isReduced={isReduced} />
       </Canvas>
     </div>
   );

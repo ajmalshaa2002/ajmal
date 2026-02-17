@@ -155,24 +155,28 @@ export default function Projects3D() {
 
   const projects = [
     {
-      title: "Immersive 3D Portfolio",
-      tech: "React, Three.js, WebGL",
-      description: "Interactive portfolio with particle systems and 3D animations"
+      title: "MPact E-Commerce",
+      tech: "MERN Stack, Tailwind CSS",
+      description: "Full-stack e-commerce application with modern UI, parallax scrolling, product management, secure checkout, and responsive design.",
+      image: "/projects/mpact.png"
     },
     {
-      title: "Neural Network Visualizer",
-      tech: "Three.js, TensorFlow.js",
-      description: "Real-time visualization of neural network training"
+      title: "Restaurant Billing System",
+      tech: "React, Node.js, MongoDB",
+      description: "Web-based system for streamlining order management, automating invoice generation, and monitoring daily sales performance.",
+      image: "/projects/restaurant-billing.png"
     },
     {
-      title: "Metaverse Experience",
-      tech: "React, R3F, Blender",
-      description: "Virtual world with multiplayer interactions"
+      title: "Hospital Management System",
+      tech: "MERN Stack",
+      description: "Comprehensive system for patient records, appointment scheduling, operations management, and reporting modules.",
+      image: "/projects/hospital-management.png"
     },
     {
-      title: "Generative Art Engine",
-      tech: "p5.js, WebGL, Shaders",
-      description: "Algorithm-based art generation platform"
+      title: "Static Parallax Website",
+      tech: "HTML, CSS, JavaScript",
+      description: "Visually engaging website featuring parallax scrolling effects, smooth animations, and responsive layout.",
+      image: "/projects/parallax-website.png"
     }
   ];
 
@@ -225,6 +229,22 @@ export default function Projects3D() {
             onMouseEnter={() => setHoveredProject(i)}
             onMouseLeave={() => setHoveredProject(null)}
           >
+            {project.image ? (
+              <img 
+                src={project.image} 
+                alt={project.title}
+                className="project-image"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) {
+                    e.target.nextSibling.style.display = 'flex';
+                  }
+                }}
+              />
+            ) : null}
+            <div className="project-image-placeholder" style={{ display: 'none' }}>
+              📸 {project.title}
+            </div>
             <div className="project-number">0{i + 1}</div>
             <h3 className="project-title">{project.title}</h3>
             <div className="project-tech">

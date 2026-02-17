@@ -108,19 +108,22 @@ export default function Home() {
               </h1>
               <div className="code-line">
                 <span className="bracket">{'{'}</span>
-                <span className="key">developer</span>
+                <span className="key">fullstack</span>
                 <span className="colon">:</span>
-                <span className="value">"creative coder"</span>
+                <span className="value">"MERN Developer"</span>
                 <span className="bracket">{'}'}</span>
               </div>
               <p className="hero-description">
-                Crafting digital experiences through code, design, and innovation.
-                Specializing in immersive 3D web applications and interactive interfaces.
+                BCA Graduate | Motivated Full Stack Developer passionate about building responsive web applications with modern technologies. Strong expertise in MERN stack, REST APIs, and creating efficient, scalable solutions.
               </p>
               <div className="cta-buttons">
                 <button className="btn-primary interactive" onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}>
                   <span>View Projects</span>
                   <span className="btn-arrow">→</span>
+                </button>
+                <button className="btn-secondary interactive" onClick={() => window.open('/resume/AJMAL-SHA-N-S.pdf', '_blank')}>
+                  <span>Download CV</span>
+                  <span className="btn-arrow">⬇</span>
                 </button>
                 <button className="btn-secondary interactive" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
                   <span>Contact</span>
@@ -151,29 +154,27 @@ export default function Home() {
               </h2>
               <div className="about-text">
                 <p className="code-block">
-                  <span className="comment">// Building the future, one line at a time</span>
+                  <span className="comment">// BCA Graduate | Building scalable web applications</span>
                 </p>
                 <p>
-                  I'm a creative developer passionate about pushing the boundaries of web technology.
-                  My expertise lies in creating immersive 3D experiences, interactive animations, and
-                  performance-optimized applications that blend aesthetics with functionality.
+                  Motivated Full Stack Developer with hands-on experience in building responsive web applications using modern technologies. Strong understanding of front-end and back-end development, database management, and RESTful APIs. Passionate about writing clean code and developing efficient, scalable solutions.
                 </p>
                 <div className="skills-grid">
                   <div className="skill-item">
-                    <div className="skill-icon">{'</>'}</div>
-                    <div className="skill-name">Three.js / WebGL</div>
+                    <div className="skill-icon">🎨</div>
+                    <div className="skill-name">React.js / TypeScript</div>
                   </div>
                   <div className="skill-item">
-                    <div className="skill-icon">{'{ }'}</div>
-                    <div className="skill-name">React / Next.js</div>
+                    <div className="skill-icon">⚙️</div>
+                    <div className="skill-name">Node.js / Express</div>
                   </div>
                   <div className="skill-item">
-                    <div className="skill-icon">{'[]'}</div>
-                    <div className="skill-name">TypeScript</div>
+                    <div className="skill-icon">💾</div>
+                    <div className="skill-name">MongoDB / Database</div>
                   </div>
                   <div className="skill-item">
-                    <div className="skill-icon">{'( )'}</div>
-                    <div className="skill-name">Node.js</div>
+                    <div className="skill-icon">🔧</div>
+                    <div className="skill-name">REST APIs / Git</div>
                   </div>
                 </div>
               </div>
@@ -189,13 +190,13 @@ export default function Home() {
                   <div className="terminal-title">~/developer</div>
                 </div>
                 <div className="terminal-body">
-                  <p><span className="prompt">$</span> cat skills.json</p>
+                  <p><span className="prompt">$</span> cat developer.json</p>
                   <p className="terminal-output">
                     {`{
-  "frontend": ["React", "Three.js", "WebGL"],
-  "backend": ["Node.js", "Python", "GraphQL"],
-  "tools": ["Git", "Docker", "AWS"],
-  "focus": "Creative Coding"
+  "frontend": ["React", "TypeScript", "Tailwind CSS"],
+  "backend": ["Node.js", "Express.js", "REST APIs"],
+  "database": ["MongoDB", "Database Optimization"],
+  "tools": ["Git", "GitHub", "Postman", "VS Code"]
 }`}
                   </p>
                   <p><span className="prompt">$</span> <span className="cursor-blink">_</span></p>
@@ -224,16 +225,19 @@ export default function Home() {
             <div className="contact-content">
               <div className="contact-info">
                 <p className="code-block">
-                  <span className="comment">// Let's build something amazing together</span>
+                  <span className="comment">// Got a project or opportunity? Let's talk!</span>
                 </p>
                 <p>
-                  I'm always interested in hearing about new projects and opportunities.
-                  Whether you have a question or just want to say hi, feel free to reach out!
+                  Interested in discussing new projects, internships, or job opportunities? I'm always eager to collaborate on exciting web development initiatives and help bring your ideas to life. Feel free to reach out!
                 </p>
                 <div className="contact-links">
                   <a href="mailto:ajmalsha0105@gmail.com" className="contact-link interactive">
                     <span className="link-icon">@</span>
                     <span>ajmalsha0105@gmail.com</span>
+                  </a>
+                  <a href="tel:+918590036343" className="contact-link interactive">
+                    <span className="link-icon">📞</span>
+                    <span>+91 8590 036 343</span>
                   </a>
                   <a href="https://www.linkedin.com/in/ajmal-sha-n-s-7422bb396" className="contact-link interactive">
                     <span className="link-icon">in</span>
@@ -242,6 +246,10 @@ export default function Home() {
                   <a href="https://github.com/ajmalshaa2002" className="contact-link interactive">
                     <span className="link-icon">{'</>'}</span>
                     <span>GitHub</span>
+                  </a>
+                  <a href="/resume/AJMAL-SHA-N-S.pdf" download className="contact-link interactive">
+                    <span className="link-icon">📄</span>
+                    <span>Download CV</span>
                   </a>
                 </div>
               </div>
@@ -268,9 +276,9 @@ export default function Home() {
         <footer className="footer">
           <div className="footer-content">
             <p className="code-block">
-              <span className="comment">:^.^ Built with React & Three.js</span>
+              <span className="comment">// Crafting digital solutions with passion</span>
             </p>
-            <p>© 2026 . All rights Ajmal sha</p>
+            <p>© 2025 Ajmal SHA. All rights reserved | Full Stack Developer | Thiruvananthapuram, India</p>
           </div>
         </footer>
       </div>

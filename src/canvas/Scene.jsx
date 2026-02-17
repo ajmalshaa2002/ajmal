@@ -1,14 +1,14 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
+import { getParticleCount, isMobile, isTouchEnabled } from '../utils/responsive';
 
 // Floating code particles with matrix effect
-function CodeParticles({ mouse }) {
+function CodeParticles({ mouse, isReduced }) {
   const ref = useRef();
-  // Reduce particles on mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const count = isMobile ? 1500 : 3000;
+  // Dynamically determine particle count based on device
+  const count = getParticleCount();
 
   const [positions, velocities] = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -28,7 +28,12 @@ function CodeParticles({ mouse }) {
   }, [count]);
 
   useFrame((state) => {
+    if (!ref.current?.geometry.attributes.position) return;
+    
     const positions = ref.current.geometry.attributes.position.array;
+    
+    // Skip updates on every frame for mobile to improve performance
+    if (isReduced && state.clock.elapsedTime % 2 > 0.016) return;
     
     for (let i = 0; i < count; i++) {
       positions[i * 3] += velocities[i * 3];
@@ -68,12 +73,15 @@ function CodeParticles({ mouse }) {
   );
 }
 
-// Rotating wireframe cubes
-function WireframeCubes({ mouse }) {
+// Rotating wireframe cubes (simplified for mobile)
+function WireframeCubes({ mouse, isReduced }) {
   const group = useRef();
   
+  // Reduce cube count on mobile
+  const cubeCount = isReduced ? 3 : 5;
+  
   const cubes = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => ({
+    return Array.from({ length: cubeCount }, (_, i) => ({
       position: [
         (Math.random() - 0.5) * 20,
         (Math.random() - 0.5) * 20,
@@ -83,10 +91,13 @@ function WireframeCubes({ mouse }) {
       scale: Math.random() * 2 + 1,
       speed: (Math.random() - 0.5) * 0.02
     }));
-  }, []);
+  }, [cubeCount]);
 
   useFrame(() => {
+    if (!group.current) return;
+    
     group.current.children.forEach((cube, i) => {
+      if (!cube) return;
       cube.rotation.x += cubes[i].speed + mouse.current.y * 0.01;
       cube.rotation.y += cubes[i].speed * 0.7 + mouse.current.x * 0.01;
     });
@@ -113,10 +124,13 @@ function BinaryRings({ mouse }) {
   const group = useRef();
   
   useFrame((state) => {
+    if (!group.current) return;
+    
     group.current.rotation.y += 0.001 + mouse.current.x * 0.002;
     group.current.rotation.x = mouse.current.y * 0.5;
     
     group.current.children.forEach((ring, i) => {
+      if (!ring) return;
       ring.rotation.x += 0.002 * (i % 2 ? 1 : -1);
       ring.rotation.z = mouse.current.x * 0.2;
     });
@@ -135,12 +149,17 @@ function BinaryRings({ mouse }) {
 }
 
 // Camera controller to follow mouse
-function CameraController({ mouse }) {
+function CameraController({ mouse, isReduced }) {
   const { camera } = useThree();
   
   useFrame(() => {
-    camera.position.x += (mouse.current.x * 2 - camera.position.x) * 0.05;
-    camera.position.y += (mouse.current.y * 2 - camera.position.y) * 0.05;
+    const targetX = mouse.current.x * 2;
+    const targetY = mouse.current.y * 2;
+    
+    // Slower mouse follow on reduced performance devices
+    const smoothness = isReduced ? 0.03 : 0.05;
+    camera.position.x += (targetX - camera.position.x) * smoothness;
+    camera.position.y += (targetY - camera.position.y) * smoothness;
     camera.lookAt(0, 0, 0);
   });
   
@@ -149,34 +168,44 @@ function CameraController({ mouse }) {
 
 export default function Scene() {
   const mouse = useRef({ x: 0, y: 0 });
+  const [isReduced, setIsReduced] = useState(false);
+
+  useEffect(() => {
+    // Determine if we should reduce animations based on device
+    const shouldReduce = isMobile() || isTouchEnabled();
+    setIsReduced(shouldReduce);
+  }, []);
 
   const handleMouseMove = (e) => {
     mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
   };
 
-  React.useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Reduce quality on mobile for better performance
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  // Determine device capabilities
+  const deviceIsMobile = isMobile();
+  const dpr = deviceIsMobile ? 1 : Math.min(2, window.devicePixelRatio);
 
   return (
     <div className="canvas-container">
       <Canvas 
         camera={{ position: [0, 0, 20], fov: 75 }}
         gl={{ 
-          antialias: !isMobile,
-          powerPreference: isMobile ? "low-power" : "high-performance"
+          antialias: !deviceIsMobile,
+          powerPreference: deviceIsMobile ? "low-power" : "high-performance",
+          logarithmicDepthBuffer: false // Improves performance on mobile
         }}
-        dpr={isMobile ? 1 : window.devicePixelRatio}
+        dpr={dpr}
+        performance={{ min: 0.5, max: 1 }} // Adaptive performance
       >
         <ambientLight intensity={0.5} />
-        <CameraController mouse={mouse} />
-        <CodeParticles mouse={mouse} />
-        <WireframeCubes mouse={mouse} />
+        <CameraController mouse={mouse} isReduced={isReduced} />
+        <CodeParticles mouse={mouse} isReduced={isReduced} />
+        <WireframeCubes mouse={mouse} isReduced={isReduced} />
         <BinaryRings mouse={mouse} />
       </Canvas>
     </div>
